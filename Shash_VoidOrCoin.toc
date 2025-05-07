@@ -1,0 +1,9 @@
+## Interface: 30300
+## Title: Shash's Void or Coin
+## Notes: Compares TSM disenchant vs vendor sell value
+## Author: Shashakar
+## Version: 1.0
+## Dependencies: TradeSkillMaster
+## LoadOnDemand: 0
+
+main.lua
