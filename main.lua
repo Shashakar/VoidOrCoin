@@ -52,7 +52,7 @@ f:RegisterEvent("PLAYER_LOGIN")
 f:SetScript("OnEvent", function()
   SLASH_BVDE1 = "/bvde"
   SlashCmdList["BVDE"] = function()
-    print(ColorText("[BetterVendor] Evaluating bag items...", 0.5, 0.8, 1))
+    print(ColorText("[Void or Coin] Evaluating bag items...", 0.5, 0.8, 1))
     EvaluateBagItems()
   end
 end)
@@ -88,20 +88,20 @@ GameTooltip:HookScript("OnTooltipSetItem", function(self)
     color = "|cffffffff"
   end
 
-  self:AddLine(color .. "BetterVendor: " .. suggestion .. " (" .. GetCoinTextureString(math.max(deValue, vendorValue)) .. ")|r")
+  self:AddLine(color .. "Void or Coin: " .. suggestion .. " (" .. GetCoinTextureString(math.max(deValue, vendorValue)) .. ")|r")
 end)
 
 -- UI Button on Vendor Frame
-local sellButton = CreateFrame("Button", "BetterVendorSellButton", MerchantFrame, "UIPanelButtonTemplate")
-sellButton:SetSize(160, 22)
-sellButton:SetText("Sell BetterVendor Items")
+local sellButton = CreateFrame("Button", "VoidOrCoinSellButton", MerchantFrame, "UIPanelButtonTemplate")
+sellButton:SetSize(175, 22)
+sellButton:SetText("Sell `Void or Coin` Items")
 sellButton:SetPoint("TOPRIGHT", MerchantFrame, "TOPRIGHT", -50, -40)
 sellButton:Hide()
 
 -- Tooltip for button
 sellButton:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
-  GameTooltip:AddLine("Sell BetterVendor Items", 1, 1, 1)
+  GameTooltip:AddLine("Sell `Void or Coin` Items", 1, 1, 1)
   GameTooltip:AddLine("Automatically sells uncommon+ gear", 0.8, 0.8, 0.8)
   GameTooltip:AddLine("if vendor price > disenchant value.", 0.8, 0.8, 0.8)
   GameTooltip:Show()
@@ -141,7 +141,7 @@ local function ShouldVendorItem(itemLink)
 end
 
 -- Vendor matching items
-local function SellBetterVendorItems()
+local function SellVoidOrCoinItems()
   local soldCount = 0
   for bag = 0, 4 do
     for slot = 1, GetContainerNumSlots(bag) do
@@ -152,10 +152,10 @@ local function SellBetterVendorItems()
       end
     end
   end
-  print("|cff33ff99[BetterVendor]|r Sold " .. soldCount .. " item(s).")
+  print("|cff33ff99[Void or Coin]|r Sold " .. soldCount .. " item(s).")
 end
 
-sellButton:SetScript("OnClick", SellBetterVendorItems)
+sellButton:SetScript("OnClick", SellVoidOrCoinItems)
 
 -- Show/hide button when merchant is open
 local merchantFrame = CreateFrame("Frame")
