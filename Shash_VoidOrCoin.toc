@@ -1,9 +1,9 @@
 ## Interface: 30300
 ## Title: Shash's Void or Coin
-## Notes: Compares TSM disenchant vs vendor sell value
+## Notes: Compares TSM disenchant vs vendor sell value. Requires at least TSM or Auctionator to work.
 ## Author: Shashakar
 ## Version: 1.0
-## Dependencies: TradeSkillMaster
+## OptionalDeps: TradeSkillMaster, Auctionator
 ## LoadOnDemand: 0
 ## SavedVariables: VoidOrCoinAccountStats
 ## SavedVariablesPerCharacter: VoidOrCoinStats
