@@ -1,5 +1,13 @@
 local f = CreateFrame("Frame")
 
+VoidOrCoinAccountStats = VoidOrCoinAccountStats or {}
+VoidOrCoinAccountStats.vendorGoldTotal = VoidOrCoinAccountStats.vendorGoldTotal or 0
+VoidOrCoinAccountStats.deGoldTotal = VoidOrCoinAccountStats.deGoldTotal or 0
+
+VoidOrCoinStats = VoidOrCoinStats or {}
+VoidOrCoinStats.vendorGoldTotal = VoidOrCoinStats.vendorGoldTotal or 0
+VoidOrCoinStats.deGoldTotal = VoidOrCoinStats.deGoldTotal or 0
+
 -- Color helper (RGB: 1.0 scale)
 local function ColorText(text, r, g, b)
   return string.format("|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, text)
@@ -50,12 +58,57 @@ end
 -- Slash command to manually evaluate items
 f:RegisterEvent("PLAYER_LOGIN")
 f:SetScript("OnEvent", function()
-  SLASH_BVDE1 = "/bvde"
-  SlashCmdList["BVDE"] = function()
-    print(ColorText("[Void or Coin] Evaluating bag items...", 0.5, 0.8, 1))
-    EvaluateBagItems()
+  SLASH_VOC1 = "/voc"
+  SlashCmdList["VOC"] = function(msg)
+    msg = msg:lower():trim()
+    if msg == "items" then
+      print(ColorText("[Void or Coin] Evaluating bag items...", 0.5, 0.8, 1))
+      EvaluateBagItems()
+    elseif msg == "stats" then
+      local v = VoidOrCoinStats.vendorGoldTotal or 0
+      local d = VoidOrCoinStats.deGoldTotal or 0
+      local saved = math.max(v - d, 0)
+    
+      local av = VoidOrCoinAccountStats.vendorGoldTotal or 0
+      local ad = VoidOrCoinAccountStats.deGoldTotal or 0
+      local asaved = math.max(av - ad, 0)
+    
+      print("|cff9370DB[VoidOrCoin]|r Character stats:")
+      print(" - Vendor Total:   |cffffff00" .. GetCoinTextureString(v))
+      print(" - DE Total:       |cff9999ff" .. GetCoinTextureString(d))
+      print(" - Total Saved:    |cff33ff33" .. GetCoinTextureString(saved))
+    
+      print("|cff9370DB[VoidOrCoin]|r Account stats:")
+      print(" - Vendor Total:   |cffffff00" .. GetCoinTextureString(av))
+      print(" - DE Total:       |cff9999ff" .. GetCoinTextureString(ad))
+      print(" - Total Saved:    |cff33ff33" .. GetCoinTextureString(asaved))
+    
+    elseif msg == "reset" then
+      StaticPopupDialogs["VOCRESET_CONFIRM"] = {
+        text = "Reset VoidOrCoin stats for this character?",
+        button1 = "Yes",
+        button2 = "Cancel",
+        OnAccept = function()
+          VoidOrCoinStats.vendorGoldTotal = 0
+          VoidOrCoinStats.deGoldTotal = 0
+          print("|cff9370DB[VoidOrCoin]|r Stats reset.")
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+      }
+      StaticPopup_Show("VOCRESET_CONFIRM")
+    else
+      print("|cff9370DB[VoidOrCoin]|r Usage:")
+      print(" - /voc items : Evaluate bag items")
+      print(" - /voc stats : Show character metrics")
+      print(" - /voc reset : Reset metrics for this character")
+    end
   end
 end)
+
+
 
 -- Tooltip enhancement
 GameTooltip:HookScript("OnTooltipSetItem", function(self)
@@ -101,15 +154,28 @@ sellButton:Hide()
 -- Tooltip for button
 sellButton:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
-  GameTooltip:AddLine("Sell `Void or Coin` Items", 1, 1, 1)
+  GameTooltip:AddLine("Sell Void or Coin Items", 1, 1, 1)
   GameTooltip:AddLine("Automatically sells uncommon+ gear", 0.8, 0.8, 0.8)
   GameTooltip:AddLine("if vendor price > disenchant value.", 0.8, 0.8, 0.8)
+  GameTooltip:AddLine(" ")
+
+  local vendor = VoidOrCoinStats.vendorGoldTotal or 0
+  local de = VoidOrCoinStats.deGoldTotal or 0
+  local saved = math.max(vendor - de, 0)
+
+  local av = VoidOrCoinAccountStats and VoidOrCoinAccountStats.vendorGoldTotal or 0
+  local ad = VoidOrCoinAccountStats and VoidOrCoinAccountStats.deGoldTotal or 0
+  local asaved = math.max(av - ad, 0)
+
+  GameTooltip:AddLine("Total Saved (Character): " .. GetCoinTextureString(saved), 0.2, 1, 0.2)
+  GameTooltip:AddLine("Total Saved (Account):  " .. GetCoinTextureString(asaved), 0.6, 0.8, 1)
   GameTooltip:Show()
 end)
+
 sellButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
 -- Simple soulbound check
-function IsItemSoulbound(itemLink)
+local function IsItemSoulbound(itemLink)
   GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
   GameTooltip:SetHyperlink(itemLink)
   for i = 1, GameTooltip:NumLines() do
@@ -147,9 +213,25 @@ local function SellVoidOrCoinItems()
     for slot = 1, GetContainerNumSlots(bag) do
       local itemLink = GetContainerItemLink(bag, slot)
       if ShouldVendorItem(itemLink) then
+        local itemString = TSMAPI:GetItemString(itemLink)
+        local vendorFunc = TSMAPI:ParseCustomPrice("vendorSell")
+        local deFunc = TSMAPI:ParseCustomPrice("Disenchant")
+        local vendorValue = vendorFunc and vendorFunc(itemString) or 0
+        local deValue = deFunc and deFunc(itemString) or 0
+      
         UseContainerItem(bag, slot)
         soldCount = soldCount + 1
+      
+        -- Per-character
+        VoidOrCoinStats.vendorGoldTotal = (VoidOrCoinStats.vendorGoldTotal or 0) + vendorValue
+        VoidOrCoinStats.deGoldTotal = (VoidOrCoinStats.deGoldTotal or 0) + deValue
+
+        -- Account-wide
+        VoidOrCoinAccountStats.vendorGoldTotal = (VoidOrCoinAccountStats.vendorGoldTotal or 0) + vendorValue
+        VoidOrCoinAccountStats.deGoldTotal = (VoidOrCoinAccountStats.deGoldTotal or 0) + deValue
+
       end
+      
     end
   end
   print("|cff33ff99[Void or Coin]|r Sold " .. soldCount .. " item(s).")

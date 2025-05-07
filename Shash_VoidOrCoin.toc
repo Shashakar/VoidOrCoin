@@ -5,5 +5,7 @@
 ## Version: 1.0
 ## Dependencies: TradeSkillMaster
 ## LoadOnDemand: 0
+## SavedVariables: VoidOrCoinAccountStats
+## SavedVariablesPerCharacter: VoidOrCoinStats
 
 main.lua
