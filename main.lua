@@ -67,21 +67,21 @@ f:SetScript("OnEvent", function()
     elseif msg == "stats" then
       local v = VoidOrCoinStats.vendorGoldTotal or 0
       local d = VoidOrCoinStats.deGoldTotal or 0
-      local saved = math.max(v - d, 0)
+      local earned = math.max(v - d, 0)
     
       local av = VoidOrCoinAccountStats.vendorGoldTotal or 0
       local ad = VoidOrCoinAccountStats.deGoldTotal or 0
-      local asaved = math.max(av - ad, 0)
+      local aearned = math.max(av - ad, 0)
     
       print("|cff9370DB[VoidOrCoin]|r Character stats:")
       print(" - Vendor Total:   |cffffff00" .. GetCoinTextureString(v))
       print(" - DE Total:       |cff9999ff" .. GetCoinTextureString(d))
-      print(" - Total Saved:    |cff33ff33" .. GetCoinTextureString(saved))
+      print(" - Total Extra Earned:    |cff33ff33" .. GetCoinTextureString(earned))
     
       print("|cff9370DB[VoidOrCoin]|r Account stats:")
       print(" - Vendor Total:   |cffffff00" .. GetCoinTextureString(av))
       print(" - DE Total:       |cff9999ff" .. GetCoinTextureString(ad))
-      print(" - Total Saved:    |cff33ff33" .. GetCoinTextureString(asaved))
+      print(" - Total Extra Earned:    |cff33ff33" .. GetCoinTextureString(aearned))
     
     elseif msg == "reset" then
       StaticPopupDialogs["VOCRESET_CONFIRM"] = {
@@ -161,14 +161,14 @@ sellButton:SetScript("OnEnter", function(self)
 
   local vendor = VoidOrCoinStats.vendorGoldTotal or 0
   local de = VoidOrCoinStats.deGoldTotal or 0
-  local saved = math.max(vendor - de, 0)
+  local earned = math.max(vendor - de, 0)
 
   local av = VoidOrCoinAccountStats and VoidOrCoinAccountStats.vendorGoldTotal or 0
   local ad = VoidOrCoinAccountStats and VoidOrCoinAccountStats.deGoldTotal or 0
-  local asaved = math.max(av - ad, 0)
+  local aearned = math.max(av - ad, 0)
 
-  GameTooltip:AddLine("Total Saved (Character): " .. GetCoinTextureString(saved), 0.2, 1, 0.2)
-  GameTooltip:AddLine("Total Saved (Account):  " .. GetCoinTextureString(asaved), 0.6, 0.8, 1)
+  GameTooltip:AddLine("Total Extra Earned (Character): " .. GetCoinTextureString(earned), 0.2, 1, 0.2)
+  GameTooltip:AddLine("Total Extra Earned (Account):  " .. GetCoinTextureString(aearned), 0.6, 0.8, 1)
   GameTooltip:Show()
 end)
 
