@@ -1,16 +1,16 @@
-**Shash's Void or Coin**
-An Ascension WoW Addon that uses TSM's Disenchant and Vendor Prices to determine which is better for equipment.
+**Shash's Void or Coin**</br>
+An Ascension WoW Addon that uses TSM's Disenchant and Vendor Prices to determine which is better for equipment.</br></br>
 
-Dependencies:
-TradeSkillMaster (found in the launcher of Ascension).
+Dependencies:</br>
+TradeSkillMaster (found in the launcher of Ascension).</br></br>
 
-**How to Use**
-First ensure that you have the latest auction house db data. While it isn't necessary to do this every time, it just ensure the most recent data is available to compare.
+**How to Use**</br>
+First ensure that you have the latest auction house db data. While it isn't necessary to do this every time, it just ensure the most recent data is available to compare.</br></br>
 
-1. Visit an auction house
-2. Click the AuctionDB tab from TSM
-3. Click the Run Full Scan - *note: this can take awhile, 10+ minutes*
-4. When it finishes, **Void or Coin** can now successfully compare pricing information.
+1. Visit an auction house</br>
+2. Click the AuctionDB tab from TSM</br>
+3. Click the Run Full Scan - *note: this can take awhile, 10+ minutes*</br>
+4. When it finishes, **Void or Coin** can now successfully compare pricing information.</br>
 
 **Features**
 1. Tooltip information</br>
